@@ -14,6 +14,7 @@ SecureBank is a high-performance, secure, and production-ready RESTful Banking A
 - [🗄️ Database Migrations (Alembic Guide)](#️-database-migrations-alembic-guide)
 - [🧪 Testing Guide (Pytest)](#-testing-guide-pytest)
 - [🧹 Code Quality & Linting (Ruff Guide)](#-code-quality--linting-ruff-guide)
+- [🔄 CI/CD Pipeline (GitHub Actions)](#-cicd-pipeline-github-actions)
 - [📚 Comprehensive Function & API Reference](#-comprehensive-function--api-reference)
   - [1. Data Models (`models.py`)](#1-data-models-modelspy)
   - [2. Pydantic Schemas (`schemas.py`)](#2-pydantic-schemas-schemaspy)
@@ -54,6 +55,7 @@ SecureBank is a high-performance, secure, and production-ready RESTful Banking A
 | **Pytest** | Test Framework |
 | **Ruff** | Extremely fast Python Linter and Code Formatter |
 | **Docker & Docker Compose** | Multi-container Deployment Environment |
+| **GitHub Actions** | Automated CI/CD Pipeline for Linting, Testing & Docker Build |
 
 ---
 
@@ -349,6 +351,28 @@ Apply standard formatting across all Python files:
 ```bash
 uv run ruff format .
 ```
+
+---
+
+## 🔄 CI/CD Pipeline (GitHub Actions)
+
+The repository includes a production-ready **GitHub Actions CI/CD workflow** configured in `.github/workflows/ci.yml`. It automatically triggers on every `push` and `pull_request` targeting the `main` or `master` branches.
+
+### Pipeline Stages & Jobs:
+
+1. **🧹 Code Quality & Linting (`lint`)**:
+   - Uses `astral-sh/setup-uv` for fast dependency caching.
+   - Runs `uv run ruff check .` to enforce linting rules.
+   - Runs `uv run ruff format --check .` to verify code formatting compliance.
+
+2. **🧪 Automated Test Suite (`test`)**:
+   - Spins up **PostgreSQL 17** and **Redis 7** service containers in GitHub Actions runner environment.
+   - Applies database migrations using `uv run alembic upgrade head`.
+   - Executes the full Pytest suite with `uv run pytest -v`.
+
+3. **🐳 Docker Container Build (`docker-build`)**:
+   - Validates multi-stage Docker build using `docker/build-push-action`.
+   - Guarantees container build readiness for production deployments.
 
 ---
 

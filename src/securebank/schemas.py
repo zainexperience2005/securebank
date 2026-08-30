@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
-from pydantic import BaseModel, EmailStr, Field
 
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserRegister(BaseModel):
@@ -24,9 +24,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     role: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
 
 
 class UserLogin(BaseModel):
@@ -55,9 +53,8 @@ class AccountResponse(BaseModel):
     is_active: bool
     daily_transfer_limit: Decimal
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
 
 class DepositRequest(BaseModel):
     account_id: int
@@ -74,17 +71,17 @@ class TransactionResponse(BaseModel):
     account_id: int
     created_at: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
-    
+    model_config = {"from_attributes": True}
+
 
 class AccountStatusUpdate(BaseModel):
     is_active: bool
 
+
 class WithdrawRequest(BaseModel):
     account_id: int
     amount: Decimal = Field(gt=0)
+
 
 class TransferRequest(BaseModel):
     source_account_id: int
@@ -101,6 +98,4 @@ class AuditLogResponse(BaseModel):
     details: str | None
     created_at: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}

@@ -28,9 +28,8 @@ def register_and_login(
 
     token = response.json()["access_token"]
 
-    return {
-        "Authorization": f"Bearer {token}"
-    }
+    return {"Authorization": f"Bearer {token}"}
+
 
 def test_create_account(client, mocker):
     headers = register_and_login(
@@ -40,9 +39,7 @@ def test_create_account(client, mocker):
 
     response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=headers,
     )
 
@@ -58,13 +55,10 @@ def test_create_account(client, mocker):
 def test_create_account_without_auth(client):
     response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
     )
 
     assert response.status_code == 401
-
 
 
 def test_invalid_account_type(client, mocker):
@@ -75,18 +69,13 @@ def test_invalid_account_type(client, mocker):
 
     response = client.post(
         "/accounts",
-        json={
-            "account_type": "crypto"
-        },
+        json={"account_type": "crypto"},
         headers=headers,
     )
 
     assert response.status_code == 400
 
-    assert response.json()["detail"] == (
-        "Account type must be savings or current"
-    )
-
+    assert response.json()["detail"] == ("Account type must be savings or current")
 
 
 def test_deposit_money(client, mocker):
@@ -97,9 +86,7 @@ def test_deposit_money(client, mocker):
 
     account_response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=headers,
     )
 
@@ -127,10 +114,7 @@ def test_deposit_money(client, mocker):
         headers=headers,
     )
 
-    assert (
-        account_response.json()["balance"]
-        == "5000.00"
-    )
+    assert account_response.json()["balance"] == "5000.00"
 
 
 def test_withdraw_money(client, mocker):
@@ -141,9 +125,7 @@ def test_withdraw_money(client, mocker):
 
     account_response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=headers,
     )
 
@@ -179,11 +161,7 @@ def test_withdraw_money(client, mocker):
         headers=headers,
     )
 
-    assert (
-        account_response.json()["balance"]
-        == "3000.00"
-    )
-
+    assert account_response.json()["balance"] == "3000.00"
 
 
 def test_withdraw_insufficient_balance(
@@ -197,9 +175,7 @@ def test_withdraw_insufficient_balance(
 
     account_response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=headers,
     )
 
@@ -216,9 +192,7 @@ def test_withdraw_insufficient_balance(
 
     assert response.status_code == 400
 
-    assert response.json()["detail"] == (
-        "Insufficient balance"
-    )
+    assert response.json()["detail"] == ("Insufficient balance")
 
 
 def test_user_cannot_access_another_users_account(
@@ -233,9 +207,7 @@ def test_user_cannot_access_another_users_account(
 
     account_response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=user_one_headers,
     )
 
@@ -267,9 +239,7 @@ def test_user_cannot_deposit_into_unauthorized_account(
 
     account_response = client.post(
         "/accounts",
-        json={
-            "account_type": "savings"
-        },
+        json={"account_type": "savings"},
         headers=user_one_headers,
     )
 
@@ -291,7 +261,6 @@ def test_user_cannot_deposit_into_unauthorized_account(
     )
 
     assert response.status_code == 404
-
 
 
 def test_successful_transfer(client, mocker):
@@ -356,8 +325,6 @@ def test_successful_transfer(client, mocker):
     assert destination_after.json()["balance"] == "2000.00"
 
 
-
-
 def test_transfer_with_insufficient_balance(
     client,
     mocker,
@@ -401,10 +368,7 @@ def test_transfer_with_insufficient_balance(
     )
 
     assert response.status_code == 400
-    assert response.json()["detail"] == (
-        "Insufficient balance"
-    )
-
+    assert response.json()["detail"] == ("Insufficient balance")
 
 
 def test_cannot_transfer_to_same_account(
@@ -435,8 +399,6 @@ def test_cannot_transfer_to_same_account(
     )
 
     assert response.status_code == 400
-
-
 
 
 def test_transaction_history(client, mocker):
@@ -483,13 +445,11 @@ def test_transaction_history(client, mocker):
     assert len(transactions) == 2
 
     transaction_types = {
-        transaction["transaction_type"]
-        for transaction in transactions
+        transaction["transaction_type"] for transaction in transactions
     }
 
     assert "deposit" in transaction_types
     assert "withdraw" in transaction_types
-
 
 
 def test_transfer_creates_both_transaction_records(
@@ -549,14 +509,10 @@ def test_transfer_creates_both_transaction_records(
         headers=receiver_headers,
     ).json()
 
-    sender_types = {
-        transaction["transaction_type"]
-        for transaction in sender_history
-    }
+    sender_types = {transaction["transaction_type"] for transaction in sender_history}
 
     receiver_types = {
-        transaction["transaction_type"]
-        for transaction in receiver_history
+        transaction["transaction_type"] for transaction in receiver_history
     }
 
     assert "transfer_out" in sender_types

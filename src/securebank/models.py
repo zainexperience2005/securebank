@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from sqlalchemy import Boolean, DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from .database import Base
 
 
@@ -11,7 +12,9 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        String(255), unique=True, index=True, nullable=False
+    )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(
         String(20),
@@ -19,7 +22,7 @@ class User(Base):
         server_default="customer",
         nullable=False,
     )
-    accounts: Mapped[list["BankAccount"]] = relationship(
+    accounts: Mapped[list[BankAccount]] = relationship(
         back_populates="owner",
         cascade="all, delete-orphan",
     )
@@ -28,7 +31,7 @@ class User(Base):
 class BankAccount(Base):
     __tablename__ = "bank_accounts"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)   
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
     account_number: Mapped[str] = mapped_column(
         String(20),
@@ -43,10 +46,10 @@ class BankAccount(Base):
     )
 
     is_active: Mapped[bool] = mapped_column(
-    Boolean,
-    default=True,
-    nullable=False,
-)
+        Boolean,
+        default=True,
+        nullable=False,
+    )
 
     daily_transfer_limit: Mapped[Decimal] = mapped_column(
         Numeric(14, 2),
@@ -65,9 +68,7 @@ class BankAccount(Base):
         nullable=False,
     )
 
-    owner: Mapped["User"] = relationship(
-        back_populates="accounts"
-    )
+    owner: Mapped[User] = relationship(back_populates="accounts")
 
 
 class Transaction(Base):

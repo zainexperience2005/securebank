@@ -7,7 +7,6 @@ from securebank.dependencies import require_admin
 from securebank.models import AuditLog, User
 from securebank.schemas import AuditLogResponse
 
-
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
@@ -22,9 +21,6 @@ def get_audit_logs(
     admin_user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ):
-    logs = db.scalars(
-        select(AuditLog)
-        .order_by(AuditLog.created_at.desc())
-    ).all()
+    logs = db.scalars(select(AuditLog).order_by(AuditLog.created_at.desc())).all()
 
     return logs

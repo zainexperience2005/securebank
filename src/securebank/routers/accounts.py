@@ -4,15 +4,15 @@ from sqlalchemy.orm import Session
 
 from securebank.database import get_db
 from securebank.dependencies import get_current_user, require_admin
-from securebank.models import BankAccount, User, AuditLog
+from securebank.models import AuditLog, BankAccount, User
 from securebank.schemas import AccountCreate, AccountResponse, AccountStatusUpdate
 from securebank.utils import generate_account_number
-
 
 router = APIRouter(
     prefix="/accounts",
     tags=["Accounts"],
 )
+
 
 @router.post(
     "",
@@ -41,9 +41,7 @@ def create_account(
         account_number = generate_account_number()
 
         existing_account = db.scalar(
-            select(BankAccount).where(
-                BankAccount.account_number == account_number
-            )
+            select(BankAccount).where(BankAccount.account_number == account_number)
         )
 
         if not existing_account:
@@ -72,9 +70,7 @@ def get_accounts(
     db: Session = Depends(get_db),
 ):
     accounts = db.scalars(
-        select(BankAccount).where(
-            BankAccount.user_id == current_user.id
-        )
+        select(BankAccount).where(BankAccount.user_id == current_user.id)
     ).all()
 
     return accounts
@@ -128,21 +124,14 @@ def update_account_status(
         )
 
     account.is_active = status_data.is_active
-    action = (
-        "unfreeze_account"
-        if status_data.is_active
-        else "freeze_account"
-    )
+    action = "unfreeze_account" if status_data.is_active else "freeze_account"
 
     audit_log = AuditLog(
         admin_user_id=admin_user.id,
         action=action,
         target_type="bank_account",
         target_id=account.id,
-        details=(
-            f"Account {account.account_number} "
-            f"status changed"
-        ),
+        details=(f"Account {account.account_number} status changed"),
     )
     db.add(audit_log)
     db.commit()

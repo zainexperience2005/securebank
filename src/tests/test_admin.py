@@ -28,9 +28,8 @@ def register_and_login(
 
     token = response.json()["access_token"]
 
-    return {
-        "Authorization": f"Bearer {token}"
-    }
+    return {"Authorization": f"Bearer {token}"}
+
 
 def test_customer_cannot_freeze_account(
     client,
@@ -54,9 +53,8 @@ def test_customer_cannot_freeze_account(
 
     assert response.status_code == 403
 
-    assert response.json()["detail"] == (
-        "Admin access required"
-    )
+    assert response.json()["detail"] == ("Admin access required")
+
 
 def test_admin_can_freeze_account(
     client,
@@ -78,11 +76,7 @@ def test_admin_can_freeze_account(
         email="admin@example.com",
     )
 
-    admin = db_session.scalar(
-        select(User).where(
-            User.email == "admin@example.com"
-        )
-    )
+    admin = db_session.scalar(select(User).where(User.email == "admin@example.com"))
 
     admin.role = "admin"
 
@@ -139,11 +133,7 @@ def test_frozen_account_cannot_withdraw(
         email="admin@example.com",
     )
 
-    admin = db_session.scalar(
-        select(User).where(
-            User.email == "admin@example.com"
-        )
-    )
+    admin = db_session.scalar(select(User).where(User.email == "admin@example.com"))
 
     admin.role = "admin"
     db_session.commit()
@@ -167,7 +157,6 @@ def test_frozen_account_cannot_withdraw(
     assert response.json()["detail"] == "Account is not active"
 
 
-
 def test_freeze_account_creates_audit_log(
     client,
     db_session,
@@ -189,11 +178,7 @@ def test_freeze_account_creates_audit_log(
         email="admin@example.com",
     )
 
-    admin = db_session.scalar(
-        select(User).where(
-            User.email == "admin@example.com"
-        )
-    )
+    admin = db_session.scalar(select(User).where(User.email == "admin@example.com"))
 
     admin.role = "admin"
     db_session.commit()
@@ -220,7 +205,6 @@ def test_freeze_account_creates_audit_log(
     assert logs[0]["action"] == "freeze_account"
     assert logs[0]["target_type"] == "bank_account"
     assert logs[0]["target_id"] == account["id"]
-
 
 
 def test_customer_cannot_view_audit_logs(

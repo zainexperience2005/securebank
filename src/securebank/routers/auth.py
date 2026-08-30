@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -7,22 +8,24 @@ from securebank.config import settings
 from securebank.database import get_db
 from securebank.dependencies import get_current_user
 from securebank.models import User
+from securebank.rate_limit import (
+    check_login_rate_limit,
+    clear_failed_logins,
+    record_failed_login,
+)
 from securebank.schemas import TokenResponse, UserLogin, UserRegister, UserResponse
 from securebank.secuirty import (
     create_access_token,
     hash_password,
     verify_password,
 )
-from securebank.rate_limit import (
-    check_login_rate_limit,
-    clear_failed_logins,
-    record_failed_login,
-)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def register(
     user: UserRegister,
     db: Session = Depends(get_db),
@@ -62,14 +65,16 @@ async def register(
                         "type": "object",
                         "properties": {
                             "username": {"type": "string", "title": "Email / Username"},
-                            "password": {"type": "string", "title": "Password", "format": "password"},
+                            "password": {
+                                "type": "string",
+                                "title": "Password",
+                                "format": "password",
+                            },
                         },
                         "required": ["username", "password"],
                     }
                 },
-                "application/json": {
-                    "schema": UserLogin.model_json_schema()
-                },
+                "application/json": {"schema": UserLogin.model_json_schema()},
             },
         }
     },
@@ -118,7 +123,8 @@ async def login_for_access_token(
     clear_failed_logins(email)
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     access_token = create_access_token(
-        data={"user_id": user.id, "sub": str(user.id)}, expires_delta=access_token_expires
+        data={"user_id": user.id, "sub": str(user.id)},
+        expires_delta=access_token_expires,
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
@@ -129,4 +135,3 @@ async def read_users_me(
     current_user: User = Depends(get_current_user),
 ):
     return current_user
-

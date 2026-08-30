@@ -13,6 +13,7 @@ SecureBank is a high-performance, secure, and production-ready RESTful Banking A
 - [🐳 Docker & Container Management](#-docker--container-management)
 - [🗄️ Database Migrations (Alembic Guide)](#️-database-migrations-alembic-guide)
 - [🧪 Testing Guide (Pytest)](#-testing-guide-pytest)
+- [🧹 Code Quality & Linting (Ruff Guide)](#-code-quality--linting-ruff-guide)
 - [📚 Comprehensive Function & API Reference](#-comprehensive-function--api-reference)
   - [1. Data Models (`models.py`)](#1-data-models-modelspy)
   - [2. Pydantic Schemas (`schemas.py`)](#2-pydantic-schemas-schemaspy)
@@ -51,6 +52,7 @@ SecureBank is a high-performance, secure, and production-ready RESTful Banking A
 | **Alembic** | Database Schema Migration Engine |
 | **PyJWT & Passlib / Bcrypt** | Security, Token Generation & Hashing |
 | **Pytest** | Test Framework |
+| **Ruff** | Extremely fast Python Linter and Code Formatter |
 | **Docker & Docker Compose** | Multi-container Deployment Environment |
 
 ---
@@ -96,12 +98,35 @@ securebank/
 
 ## 🚀 Quick Start Guide (Local Setup)
 
-### 1. Prerequisites
+### ⚡ Automatic One-Command Setup & Launch (Recommended)
+
+Simply execute the script corresponding to your shell to automatically generate `.env`, sync dependencies, start Docker containers, apply database migrations, run Ruff & Pytest checks, and launch the development server:
+
+```powershell
+# Windows PowerShell
+.\run.ps1
+```
+
+```cmd
+# Windows Command Prompt
+run.bat
+```
+
+```bash
+# Linux / macOS / Git Bash
+./run.sh
+```
+
+---
+
+### 🛠️ Manual Step-by-Step Setup
+
+#### 1. Prerequisites
 - Python `>= 3.14`
 - [`uv`](https://github.com/astral-sh/uv) installed (`pip install uv` or via installer)
 - Docker Desktop or PostgreSQL & Redis installed locally
 
-### 2. Environment Setup
+#### 2. Environment Setup
 Create a `.env` file in the root directory:
 
 ```env
@@ -285,6 +310,44 @@ uv run pytest -v src/tests/test_auth.py
 
 ```bash
 uv run pytest -v -k "test_admin_can_freeze_account"
+```
+
+---
+
+## 🧹 Code Quality & Linting (Ruff Guide)
+
+Ruff is used for extremely fast Python linting and code formatting. The rules and formatting styles are configured in `pyproject.toml` under `[tool.ruff]`.
+
+### 1. Check Code for Lint Errors
+
+Run Ruff linter across the repository:
+
+```bash
+uv run ruff check .
+```
+
+### 2. Automatically Fix Lint Errors
+
+Automatically fix safe linting and import ordering issues:
+
+```bash
+uv run ruff check --fix .
+```
+
+### 3. Check Code Formatting Compliance
+
+Check if files comply with the formatting standard without modifying them:
+
+```bash
+uv run ruff format --check .
+```
+
+### 4. Format All Files
+
+Apply standard formatting across all Python files:
+
+```bash
+uv run ruff format .
 ```
 
 ---

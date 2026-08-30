@@ -1,7 +1,7 @@
-import bcrypt
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import bcrypt
 import jwt
 from fastapi import HTTPException, status
 
@@ -26,11 +26,11 @@ def create_access_token(
 ) -> str:
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.now(UTC) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire = datetime.now(UTC) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    
+
     # Ensure both sub and user_id claims exist for compatibility
     if "user_id" in to_encode and "sub" not in to_encode:
         to_encode["sub"] = str(to_encode["user_id"])
@@ -60,5 +60,5 @@ def decode_access_token(token: str) -> int:
         if raw_id is None:
             raise credentials_exception
         return int(raw_id)
-    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError):
-        raise credentials_exception
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, ValueError) as err:
+        raise credentials_exception from err

@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -7,14 +5,18 @@ from sqlalchemy.orm import Session
 from securebank.database import get_db
 from securebank.dependencies import get_current_user
 from securebank.models import BankAccount, Transaction, User
-from securebank.schemas import DepositRequest, TransactionResponse, WithdrawRequest, TransferRequest
+from securebank.schemas import (
+    DepositRequest,
+    TransactionResponse,
+    TransferRequest,
+    WithdrawRequest,
+)
 from securebank.utils import generate_transaction_reference
 
 router = APIRouter(
     prefix="/transactions",
     tags=["Transactions"],
 )
-
 
 
 @router.post(
@@ -42,7 +44,7 @@ def deposit_money(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Account not found",
             )
-        
+
         if not account.is_active:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -70,13 +72,14 @@ def deposit_money(
         db.rollback()
         raise
 
-    except Exception:
+    except Exception as err:
         db.rollback()
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Deposit failed",
-        )
+        ) from err
+
 
 @router.post(
     "/withdraw",
@@ -137,15 +140,15 @@ def withdraw_money(
         db.rollback()
         raise
 
-    except Exception:
+    except Exception as err:
         db.rollback()
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Withdrawal failed",
-        )
+        ) from err
 
-        
+
 @router.post(
     "/transfer",
     status_code=status.HTTP_201_CREATED,
@@ -155,10 +158,7 @@ def transfer_money(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    if (
-        transfer_data.source_account_id
-        == transfer_data.destination_account_id
-    ):
+    if transfer_data.source_account_id == transfer_data.destination_account_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Source and destination accounts cannot be the same",
@@ -168,10 +168,8 @@ def transfer_money(
         source_account = db.scalar(
             select(BankAccount)
             .where(
-                BankAccount.id
-                == transfer_data.source_account_id,
-                BankAccount.user_id
-                == current_user.id,
+                BankAccount.id == transfer_data.source_account_id,
+                BankAccount.user_id == current_user.id,
             )
             .with_for_update()
         )
@@ -190,10 +188,7 @@ def transfer_money(
 
         destination_account = db.scalar(
             select(BankAccount)
-            .where(
-                BankAccount.id
-                == transfer_data.destination_account_id
-            )
+            .where(BankAccount.id == transfer_data.destination_account_id)
             .with_for_update()
         )
 
@@ -230,10 +225,12 @@ def transfer_money(
             description="Transfer",
         )
 
-        db.add_all([
-            debit_transaction,
-            credit_transaction,
-        ])
+        db.add_all(
+            [
+                debit_transaction,
+                credit_transaction,
+            ]
+        )
 
         db.commit()
 
@@ -248,13 +245,13 @@ def transfer_money(
         db.rollback()
         raise
 
-    except Exception:
+    except Exception as err:
         db.rollback()
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Transfer failed",
-        )
+        ) from err
 
 
 @router.get(

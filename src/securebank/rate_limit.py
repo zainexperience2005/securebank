@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 
 from securebank.redis_client import redis_client
 
-
 MAX_LOGIN_ATTEMPTS = 5
 LOGIN_WINDOW_SECONDS = 300
 

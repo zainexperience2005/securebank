@@ -8,7 +8,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: Dockerfile
-    preDeployCommand: uv run alembic upgrade head
+    dockerCommand: sh -c "uv run alembic upgrade head && /app/.venv/bin/uvicorn securebank.main:app --host 0.0.0.0 --port 8000"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -31,6 +31,9 @@ services:
     name: securebank-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow internal and external access
 
 databases:
   # 3. PostgreSQL Database

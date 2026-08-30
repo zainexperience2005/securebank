@@ -17,4 +17,3 @@ def test_scalar_docs(client):
 
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-

@@ -1,5 +1,13 @@
 # 🏦 SecureBank API
 
+[![Live Demo](https://img.shields.io/badge/Render-Deployed-brightgreen?style=for-the-badge&logo=render)](https://securebank-7jh8.onrender.com)
+[![Swagger UI](https://img.shields.io/badge/API_Docs-Swagger-blue?style=for-the-badge&logo=fastapi)](https://securebank-7jh8.onrender.com/docs)
+
+> 🌐 **Live Production Deployment**:  
+> - **Production API URL**: [https://securebank-7jh8.onrender.com](https://securebank-7jh8.onrender.com)  
+> - **Interactive Swagger Docs**: [https://securebank-7jh8.onrender.com/docs](https://securebank-7jh8.onrender.com/docs)  
+> - **Hosted Platform**: Render Web Services (FastAPI + PostgreSQL + Redis)
+
 SecureBank is a high-performance, secure, and production-ready RESTful Banking API built with **FastAPI**, **SQLAlchemy (Async-compatible ORM)**, **PostgreSQL**, **Redis**, and **Alembic**. It features robust JWT-based authentication, Role-Based Access Control (RBAC), bank account management, financial transactions (deposits, withdrawals, transfers), audit logging, and Redis-backed rate limiting.
 
 ---

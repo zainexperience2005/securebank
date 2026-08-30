@@ -15,7 +15,6 @@ SecureBank is a high-performance, secure, and production-ready RESTful Banking A
 - [🧪 Testing Guide (Pytest)](#-testing-guide-pytest)
 - [🧹 Code Quality & Linting (Ruff Guide)](#-code-quality--linting-ruff-guide)
 - [🔄 CI/CD Pipeline (GitHub Actions)](#-cicd-pipeline-github-actions)
-- [🚀 Render Deployment Guide](#-render-deployment-guide)
 - [📚 Comprehensive Function & API Reference](#-comprehensive-function--api-reference)
   - [1. Data Models (`models.py`)](#1-data-models-modelspy)
   - [2. Pydantic Schemas (`schemas.py`)](#2-pydantic-schemas-schemaspy)
@@ -377,26 +376,6 @@ The repository includes a production-ready **GitHub Actions CI/CD workflow** con
 
 ---
 
-## 🚀 Render Deployment Guide
-
-SecureBank includes a pre-configured [`render.yaml`](file:///d:/securebank/render.yaml) Blueprint file to deploy the entire application stack (**FastAPI Web Service**, **PostgreSQL Database**, and **Redis Instance**) to [Render](https://render.com) with a single click.
-
-### ⚡ 1-Click Deployment via Render Blueprint
-
-1. Push your repository to **GitHub** or **GitLab**.
-2. Log into the [Render Dashboard](https://dashboard.render.com/).
-3. Click **New +** → Select **Blueprint**.
-4. Connect your **SecureBank** GitHub repository.
-5. Render will automatically detect [`render.yaml`](file:///d:/securebank/render.yaml) and provision:
-   - Managed **PostgreSQL Database** (`securebank-db`)
-   - Managed **Redis Instance** (`securebank-redis`)
-   - **FastAPI Docker Web Service** (`securebank-api`)
-   - Auto-generated strong `JWT_SECRET_KEY`
-6. Click **Apply**.
-
-Render will automatically build your Docker container, execute database migrations via `uv run alembic upgrade head` as a `preDeployCommand`, and issue a live SSL `https://...onrender.com` domain for your API and Swagger docs (`/docs`)..
-
----
 
 ## 📚 Comprehensive Function & API Reference
 

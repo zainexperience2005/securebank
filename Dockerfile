@@ -12,8 +12,6 @@ COPY . .
 
 RUN uv sync --frozen --no-dev
 
-RUN chmod +x /app/start.sh
-
 EXPOSE 8000
 
-CMD ["/app/start.sh"]
+CMD ["/app/.venv/bin/uvicorn", "securebank.main:app", "--host", "0.0.0.0", "--port", "8000"]
